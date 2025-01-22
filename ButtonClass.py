@@ -42,4 +42,6 @@ class Button(pygame.sprite.Sprite):
     def clicked(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.on_icon:
             self.sound.play()
+            return True
+        return False
 
