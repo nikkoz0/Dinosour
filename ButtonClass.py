@@ -36,7 +36,7 @@ class Button(pygame.sprite.Sprite):
         text_rect = text.get_rect(center=self.rect.center)
         screen.blit(text, text_rect)
 
-    def is_mouse_over(self, pos):
+    def update(self, pos):
         self.on_icon = self.rect.collidepoint(pos)
 
     def clicked(self, event):

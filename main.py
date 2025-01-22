@@ -10,7 +10,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 button_group = pygame.sprite.Group()
 
-start_btn = Button(WIDTH // 2 - 100, HEIGHT // 2, 339, 92, 'Играть', 'button.png',
+start_btn = Button(WIDTH // 2 - 100, HEIGHT // 2, 339, 92, '', 'button.png',
                    'button_clicked.png', 'data/click.mp3', button_group)
 
 running = True
@@ -22,11 +22,11 @@ while running:
             running = False
             terminate()
 
+        button_group.update(pygame.mouse.get_pos())
+
         for b in button_group:
             b.clicked(event)
-
-    for b in button_group:
-        b.is_mouse_over(pygame.mouse.get_pos())
     screen.fill(pygame.Color('black'))
-    button_group.draw(screen)
+    for b in button_group:
+        b.draw(screen)
     pygame.display.flip()
