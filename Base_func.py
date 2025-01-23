@@ -4,6 +4,7 @@ import sys
 
 WIDTH = 600
 HEIGHT = 675
+FPS = 60
 
 
 def load_image(name, color_key=None):

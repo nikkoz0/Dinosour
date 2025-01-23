@@ -19,6 +19,8 @@ class Button(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(x, y))
 
         self.sound = pygame.mixer.Sound(sound)
+        self.volume = 1
+        self.sound.set_volume(self.volume)
 
         self.on_icon = False
 
@@ -39,8 +41,11 @@ class Button(pygame.sprite.Sprite):
     def update(self, pos):
         self.on_icon = self.rect.collidepoint(pos)
 
-    def clicked(self, event):
+    def clicked(self, event, volume=None):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.on_icon:
+            if volume:
+                self.volume = volume
+                self.sound.set_volume(self.volume)
             self.sound.play()
             return True
         return False
