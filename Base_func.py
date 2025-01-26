@@ -2,9 +2,17 @@ import os
 import pygame
 import sys
 
+
+a = open('data/consts.txt')
+f = list(map(str.strip, a.readlines()))
+
 WIDTH = 600
 HEIGHT = 675
 FPS = 60
+
+VOLUME = float(f[0])
+
+a.close()
 
 
 def load_image(name, color_key=None):

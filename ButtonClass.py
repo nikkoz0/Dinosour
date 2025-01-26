@@ -1,6 +1,6 @@
 import pygame
 
-from Base_func import load_image
+from Base_func import load_image, VOLUME
 
 
 class Button(pygame.sprite.Sprite):
@@ -19,7 +19,7 @@ class Button(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(x, y))
 
         self.sound = pygame.mixer.Sound(sound)
-        self.volume = 1
+        self.volume = VOLUME
         self.sound.set_volume(self.volume)
 
         self.on_icon = False
@@ -49,4 +49,57 @@ class Button(pygame.sprite.Sprite):
             self.sound.play()
             return True
         return False
+
+
+class Slaider(pygame.sprite.Sprite):
+    def __init__(self, x, y, width, sound, *groups):
+        super().__init__(*groups)
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = 20
+        self.volume = VOLUME
+        self.on_icon = False
+
+        self.sound = pygame.mixer.Sound(sound)
+        self.sound.set_volume(self.volume)
+
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, pygame.Color('Black'), self.rect )
+
+    def update(self, pos):
+        self.on_icon = self.rect.collidepoint(pos)
+
+    def clicked(self, event, point, pos, volume=None):
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.on_icon:
+            if volume:
+                self.volume = volume
+                self.sound.set_volume(self.volume)
+            self.sound.play()
+            x, y = pos
+            point.move(x)
+            return True
+        return False
+
+
+class Point(pygame.sprite.Sprite):
+    def __init__(self, x, y, width, *groups):
+        super().__init__(*groups)
+        self.x = x
+        self.y = y
+        self.width = width / 100
+        self.height = 20
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, pygame.Color('White'), self.rect)
+
+    def move(self, x):
+        self.x = x
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+
+    def update(self, pos):
+        pass
 

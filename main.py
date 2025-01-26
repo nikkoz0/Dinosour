@@ -1,8 +1,8 @@
 import pygame
 import sqlite3
 
-from Base_func import WIDTH, HEIGHT, terminate, load_image, FPS
-from ButtonClass import Button
+from Base_func import WIDTH, HEIGHT, terminate, load_image, FPS, VOLUME
+from ButtonClass import Button, Slaider, Point
 from draw_table import draw_table
 
 
@@ -14,7 +14,7 @@ main_img = load_image('main_menu.png')
 
 def main():
     button_group = pygame.sprite.Group()
-
+    # 169.5 = width изображения / 2
     start_btn = Button(WIDTH // 2 - 169.5, HEIGHT // 2 - HEIGHT // 3, 339, 92, 'Играть', 'button.png',
                        'button_clicked.png', 'data/click.mp3', button_group)
 
@@ -23,7 +23,7 @@ def main():
 
     score_btn = Button(WIDTH // 2 - 169.5, HEIGHT // 2 + HEIGHT // 33, 339, 92, 'Статистика', 'button.png',
                             'button_clicked.png', 'data/click.mp3', button_group)
-    exit_button = Button(WIDTH // 2 - 169.5, HEIGHT // 2 + HEIGHT//5, 339, 92, 'Выйти', 'button.png',
+    exit_button = Button(WIDTH // 2 - 169.5, HEIGHT // 2 + HEIGHT//4.7, 339, 92, 'Выйти', 'button.png',
                          'button_clicked.png', 'data/click.mp3', button_group)
 
     running = True
@@ -33,11 +33,11 @@ def main():
                 running = False
                 terminate()
 
-            if start_btn.clicked(event):
+            if start_btn.clicked(event, VOLUME):
                 return# будет вызов функции самой игры
-            if settings_btn.clicked(event):
+            if settings_btn.clicked(event, VOLUME):
                 settings()
-            if score_btn.clicked(event):
+            if score_btn.clicked(event, VOLUME):
                 score()
 
         screen.fill(pygame.Color('black'))
@@ -51,10 +51,13 @@ def main():
 
 
 def settings():
+    global VOLUME
     button_group = pygame.sprite.Group()
 
-    exit_button = Button(WIDTH // 2 - 169.5, HEIGHT // 2 + HEIGHT//5, 339, 92, 'Назад', 'button.png',
+    exit_button = Button(WIDTH // 2 - 169.5, HEIGHT // 2 + HEIGHT//4.7, 339, 92, 'Назад', 'button.png',
                          'button_clicked.png', 'data/click.mp3', button_group)
+    slaider = Slaider(50, 50, WIDTH - 100, 'data/click.mp3', button_group)
+    point = Point(50 + (WIDTH - 150) * VOLUME, 50, WIDTH - 100, button_group)
     running = True
 
     while running:
@@ -63,8 +66,19 @@ def settings():
                 running = False
                 terminate()
 
-            if exit_button.clicked(event):
+            if exit_button.clicked(event, VOLUME):
+                f = open('data/consts.txt')
+                old_data = list(map(str.strip, f.readlines()))
+                old_data[0] = VOLUME
+                f.close()
+                f = open('data/consts.txt', mode='w')
+                for i in old_data:
+                    f.write(f'{str(i)}\n')
+                f.close()
+
                 return
+            if slaider.clicked(event, point, pygame.mouse.get_pos(), VOLUME):
+                VOLUME = (point.x - slaider.x) / ((slaider.width - slaider.x) / 100) / 100
 
         screen.fill(pygame.Color('black'))
         screen.blit(main_img, (-600, 0))
@@ -73,13 +87,19 @@ def settings():
         for button in button_group:
             button.draw(screen)
 
+        txt = 'Настроить звук'
+        font = pygame.font.Font(None, 36)
+        text = font.render(txt, True, (0, 0, 0))
+        cords = (WIDTH // 2 - 90, 20)
+        screen.blit(text, cords)
+
         pygame.display.flip()
 
 
 def score():
     button_group = pygame.sprite.Group()
 
-    exit_button = Button(WIDTH // 2 - 169.5, HEIGHT // 2 + HEIGHT//5, 339, 92, 'Назад', 'button.png',
+    exit_button = Button(WIDTH // 2 - 169.5, HEIGHT // 2 + HEIGHT//4.7, 339, 92, 'Назад', 'button.png',
                          'button_clicked.png', 'data/click.mp3', button_group)
 
     con = sqlite3.connect('data/stat.db')
@@ -99,7 +119,7 @@ def score():
                 running = False
                 terminate()
 
-            if exit_button.clicked(event):
+            if exit_button.clicked(event, VOLUME):
                 return
             if event.type == pygame.MOUSEWHEEL:
                 if event.y == 1:
