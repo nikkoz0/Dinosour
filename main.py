@@ -4,6 +4,7 @@ import sqlite3
 from Base_func import WIDTH, HEIGHT, terminate, load_image, FPS, VOLUME
 from ButtonClass import Button, Slaider, Point
 from draw_table import draw_table
+from draw_maps import Map
 
 
 pygame.init()
@@ -54,10 +55,14 @@ def settings():
     global VOLUME
     button_group = pygame.sprite.Group()
 
-    exit_button = Button(WIDTH // 2 - 169.5, HEIGHT // 2 + HEIGHT//4.7, 339, 92, 'Назад', 'button.png',
+    exit_button = Button(WIDTH // 2 - 169.5, HEIGHT // 2 + HEIGHT//3, 339, 92, 'Назад', 'button.png',
                          'button_clicked.png', 'data/click.mp3', button_group)
     slaider = Slaider(50, 50, WIDTH - 100, 'data/click.mp3', button_group)
     point = Point(50 + (WIDTH - 150) * VOLUME, 50, WIDTH - 100, button_group)
+
+    first_map = Map(40, 100, 200, 200,
+                    'main_menu.png', 'data/click.mp3', button_group)
+
     running = True
 
     while running:
@@ -79,6 +84,8 @@ def settings():
                 return
             if slaider.clicked(event, point, pygame.mouse.get_pos(), VOLUME):
                 VOLUME = (point.x - slaider.x) / ((slaider.width - slaider.x) / 100) / 100
+
+            first_map.clicked(event)
 
         screen.fill(pygame.Color('black'))
         screen.blit(main_img, (-600, 0))
