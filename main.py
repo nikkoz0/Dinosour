@@ -77,6 +77,7 @@ class DB:
         self.cur.execute("""INSERT INTO stat VALUES(?, ?)""", (res, datetime.datetime.now()))
         self.db.commit()
 
+
 class Particle(pygame.sprite.Sprite):
     fire = [load_image("waterDrop.png")]
     for scale in (10, 11):
