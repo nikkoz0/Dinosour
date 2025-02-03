@@ -2,9 +2,10 @@ import pygame
 import os
 import random
 import sqlite3
+import datetime
 from menu import menu
 from game_over import game_over
-from Base_func import WIDTH as W, HEIGHT as H
+from Base_func import WIDTH as W, HEIGHT as H, VOLUME
 
 
 menu()
@@ -67,11 +68,14 @@ class DB:
     def __init__(self):
         self.db = sqlite3.connect('data/stat.db')
         self.cur = self.db.cursor()
-        act = 100
-        self.cur.execute("""INSERT INTO stat VALUES (?, ?)""", (act, 0))
+        #act = 100
+        #self.cur.execute("""INSERT INTO stat VALUES (?, ?)""", (act, 0))
         self.res = self.cur.execute("""SELECT * FROM score""").fetchall()
         self.db.commit()
 
+    def add(self, res):
+        self.cur.execute("""INSERT INTO stat VALUES(?, ?)""", (res, datetime.datetime.now()))
+        self.db.commit()
 
 class Particle(pygame.sprite.Sprite):
     fire = [load_image("waterDrop.png")]
@@ -317,7 +321,7 @@ class Game:
         self.playing = True
         if not game.Flpause:
             pygame.mixer.music.load('data/PhonMusic.mp3')
-            pygame.mixer.music.set_volume(0.5)
+            pygame.mixer.music.set_volume(VOLUME)
             pygame.mixer.music.play(-1, 10)
             self.jumpS = pygame.mixer.Sound('data/jumpSound.mp3')
             self.getS = pygame.mixer.Sound('data/100sound.mp3')
@@ -419,6 +423,7 @@ if __name__ == '__main__':
                     pygame.mixer.music.stop()
                     game.db.close()
                     game.hero.kill()
+                    db.add(game.score.act)
                     if game_over(screen):
                         game.restart()
                         LOOPS = 0
