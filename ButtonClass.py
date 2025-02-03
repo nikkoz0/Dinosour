@@ -51,6 +51,7 @@ class Button(pygame.sprite.Sprite):
         return False
 
 
+# класс для слайдера без картинки
 class Slaider(pygame.sprite.Sprite):
     def __init__(self, x, y, width, sound, *groups):
         super().__init__(*groups)
@@ -82,6 +83,8 @@ class Slaider(pygame.sprite.Sprite):
             point.move(x)
             return True
         return False
+
+# класс для точки на слайдере(без картинки)
 
 
 class Point(pygame.sprite.Sprite):

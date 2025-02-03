@@ -1,6 +1,6 @@
 import pygame
 
-from Base_func import WIDTH, HEIGHT, terminate, load_image, VOLUME
+from Base_func import load_image, VOLUME
 
 
 class Map(pygame.sprite.Sprite):

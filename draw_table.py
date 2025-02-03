@@ -2,6 +2,8 @@ import pygame
 
 from Base_func import WIDTH, HEIGHT
 
+# функция для вывода дб на экрна(сортировка не меняется)
+
 
 def draw_table(results, scroll, screen):
     results = sorted(results, key=lambda x: x[0], reverse=True)
