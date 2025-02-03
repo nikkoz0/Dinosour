@@ -6,10 +6,9 @@ from menu import menu
 from game_over import game_over
 from Base_func import WIDTH as W, HEIGHT as H
 
+
 menu()
 os.environ['SDL_VIDEO_CENTERED'] = '1'
-
-
 
 WIDTH = 1900
 HEIGHT = 1250
@@ -55,7 +54,6 @@ boy4 = load_image("boy4 (2).png")
 boy5 = load_image("boy3 (1).png")
 boy6 = load_image("boy4 (1).png")
 boy7 = load_image("boy1 (1).png")
-#boy8 = load_image("boy2 (1).png")
 
 player_image = 'mar.png'
 screen_rect = (0, 0, WIDTH, HEIGHT)
@@ -71,7 +69,7 @@ class DB:
         self.cur = self.db.cursor()
         act = 100
         self.cur.execute("""INSERT INTO stat VALUES (?, ?)""", (act, 0))
-        self.res = self.cur.execute("""SELECT score FROM stat""").fetchall()
+        self.res = self.cur.execute("""SELECT * FROM score""").fetchall()
         self.db.commit()
 
 
@@ -303,7 +301,7 @@ class Obstacles:
 
 class Game:
     def __init__(self):
-        self.db = sqlite3.connect('../../Desktop/stat.db')
+        self.db = sqlite3.connect('data/stat.db')
         self.cur = self.db.cursor()
         self.speed = 5
         self.bg = [Background(0), Background(1900)]
@@ -323,7 +321,6 @@ class Game:
             pygame.mixer.music.play(-1, 10)
             self.jumpS = pygame.mixer.Sound('data/jumpSound.mp3')
             self.getS = pygame.mixer.Sound('data/100sound.mp3')
-            self.fallS = pygame.mixer.Sound('data/zvuk-padenija-v-listja.mp3')
         else:
             pygame.mixer.music.unpause()
             self.Flpause = False
@@ -363,72 +360,81 @@ class Game:
         self.__init__()
 
 
-db = DB()
-score = Score
-game = Game()
-clock = pygame.time.Clock()
-running = True
-rect_heroY = game.hero.pos[1]
-a = 0
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                if game.hero.onground and game.playing:
-                    game.hero.jump()
-                    game.jumpS.play()
-            if pygame.key.get_pressed():
-                if not game.playing and a != 1:
-                    a = 1
-                    game.start()
-            if event.key == pygame.K_p and not game.over:
-                if game.playing:
-                    game.stop()
-                else:
-                    game.start()
-            if event.key == pygame.K_r:
-                game.hero.kill()
-                game.restart()
-                LOOPS = 0
-                game.playing = True
-            elif event.key == pygame.K_UP:
-                if game.hero.onground and game.playing:
-                    game.hero.jump()
-                    game.jumpS.play()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                couples(pygame.mouse.get_pos())
-                pygame.mixer.music.stop()
-    if game.playing:
-        if game.speed != 10 and LOOPS % 1000 == 0 and LOOPS != 0:
-            game.speed += 1
-            game.getS.play()
-        elif LOOPS % 1000 == 0 and LOOPS != 0:
-            game.getS.play()
-        game.score.update(LOOPS)
-        game.score.show()
-        for bg in game.bg:
-            bg.update(-game.speed)
-            bg.show()
-        hero_gr.update(game.hero.rect[0], game.hero.rect[1])
-        hero_gr.draw(screen)
-        all_sprites.update()
-        all_sprites.draw(screen)
-        if game.spaw(LOOPS):
-            game.spawn_obstacles()
-        for obstacle in game.obstacles:
-            obstacle.show()
-            obstacle.update(-game.speed)
-            if game.collision.between(game.hero.rect[:2], obstacle):
-                pygame.mixer.music.stop()
-                game.db.close()
-                game.over = True
-                game.stop()
-        LOOPS += 1
-        game.score.update(LOOPS)
-        game.score.show()
-        pygame.display.flip()
-        clock.tick(120)
-pygame.quit()
-db.cur.close()
+if __name__ == '__main__':
+    db = DB()
+    score = Score()
+    game = Game()
+    clock = pygame.time.Clock()
+    running = True
+    rect_heroY = game.hero.pos[1]
+    a = 1
+    game.start()
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    if game.hero.onground and game.playing:
+                        game.hero.jump()
+                        game.jumpS.play()
+                if event.key == pygame.K_p and not game.over:
+                    if game.playing:
+                        game.stop()
+                    else:
+                        game.start()
+                if event.key == pygame.K_r:
+                    game.hero.kill()
+                    game.restart()
+                    LOOPS = 0
+                    game.playing = True
+                elif event.key == pygame.K_UP:
+                    if game.hero.onground and game.playing:
+                        game.hero.jump()
+                        game.jumpS.play()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    couples(pygame.mouse.get_pos())
+                    pygame.mixer.music.stop()
+        if game.playing:
+            if game.speed != 10 and LOOPS % 1000 == 0 and LOOPS != 0:
+                game.speed += 1
+                game.getS.play()
+            elif LOOPS % 1000 == 0 and LOOPS != 0:
+                game.getS.play()
+            game.score.update(LOOPS)
+            game.score.show()
+            for bg in game.bg:
+                bg.update(-game.speed)
+                bg.show()
+            hero_gr.update(game.hero.rect[0], game.hero.rect[1])
+            hero_gr.draw(screen)
+            all_sprites.update()
+            all_sprites.draw(screen)
+            if game.spaw(LOOPS):
+                game.spawn_obstacles()
+            for obstacle in game.obstacles:
+                obstacle.show()
+                obstacle.update(-game.speed)
+                if game.collision.between(game.hero.rect[:2], obstacle):
+                    pygame.mixer.music.stop()
+                    game.db.close()
+                    game.hero.kill()
+                    if game_over(screen):
+                        game.restart()
+                        LOOPS = 0
+                        game.playing = True
+                    else:
+                        screen = pygame.display.set_mode((W, H))
+                        menu()
+                        screen = pygame.display.set_mode(screen_size)
+                        game.restart()
+                        LOOPS = 0
+                        game.playing = True
+
+            LOOPS += 1
+            game.score.update(LOOPS)
+            game.score.show()
+            pygame.display.flip()
+            clock.tick(120)
+    pygame.quit()
+    db.cur.close()

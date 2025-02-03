@@ -2,16 +2,17 @@ import pygame
 from ButtonClass import Button
 from Base_func import VOLUME, terminate
 
+
 def game_over(screen):
     button_group = pygame.sprite.Group()
 
     running = True
     width, height = screen.get_size()
 
-    exit_button = Button(width // 5, height // 2, 339, 92, 'В меню', 'button.png',
+    exit_button = Button(width // 5 + 339 // 2 - 40, height // 2, 339, 92, 'В меню', 'button.png',
            'button_clicked.png', 'data/click.mp3', button_group)
 
-    restart_button = Button(width // 2, height // 2, 339, 92, 'Начать заново', 'button.png',
+    restart_button = Button(width // 2 + 339 // 2 - 40, height // 2, 339, 92, 'Начать заново', 'button.png',
            'button_clicked.png', 'data/click.mp3', button_group)
 
     while running:

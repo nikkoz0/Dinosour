@@ -62,6 +62,9 @@ def settings():
     first_map = Map(40, 100, 200, 200,
                     'mbgood.jpg', 'data/click.mp3', button_group)
 
+    second_map = Map(360, 100, 200, 200,
+                    'back_2.jpg', 'data/click.mp3', button_group)
+
     running = True
 
     while running:
@@ -85,6 +88,7 @@ def settings():
                 VOLUME = (point.x - slaider.x) / ((slaider.width - slaider.x) / 100) / 100
 
             first_map.clicked(event)
+            second_map.clicked(event)
 
         screen.fill(pygame.Color('black'))
         screen.blit(main_img, (-600, 0))
