@@ -35,7 +35,7 @@ def game_over(screen):
         text = 'GAME OVER'
         font = pygame.font.Font(None, 36)
         text = font.render(text, True, (255, 255, 255))
-        text_rect = text.get_rect(center=(width // 2.3, height//4.6))
+        text_rect = text.get_rect(center=(width // 2, height//4.6))
         screen.blit(text, text_rect)
 
         pygame.display.flip()
